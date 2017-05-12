@@ -14,6 +14,7 @@
 		39C609381EC489C600105DD7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39C609361EC489C600105DD7 /* LaunchScreen.storyboard */; };
 		39C609401EC490EC00105DD7 /* MHFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C6093F1EC490EC00105DD7 /* MHFileManager.swift */; };
 		39C609421EC4B1D800105DD7 /* String+Subscripts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C609411EC4B1D800105DD7 /* String+Subscripts.swift */; };
+		39C609441EC5BBCF00105DD7 /* BackgroundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C609431EC5BBCF00105DD7 /* BackgroundManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		39C609391EC489C600105DD7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		39C6093F1EC490EC00105DD7 /* MHFileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MHFileManager.swift; sourceTree = "<group>"; };
 		39C609411EC4B1D800105DD7 /* String+Subscripts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Subscripts.swift"; sourceTree = "<group>"; };
+		39C609431EC5BBCF00105DD7 /* BackgroundManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +63,7 @@
 				39C609411EC4B1D800105DD7 /* String+Subscripts.swift */,
 				39C6092D1EC489C600105DD7 /* AppDelegate.swift */,
 				39C6092F1EC489C600105DD7 /* ViewController.swift */,
+				39C609431EC5BBCF00105DD7 /* BackgroundManager.swift */,
 				39C6093F1EC490EC00105DD7 /* MHFileManager.swift */,
 				39C609311EC489C600105DD7 /* Main.storyboard */,
 				39C609341EC489C600105DD7 /* Assets.xcassets */,
@@ -142,6 +145,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39C609441EC5BBCF00105DD7 /* BackgroundManager.swift in Sources */,
 				39C609301EC489C600105DD7 /* ViewController.swift in Sources */,
 				39C609401EC490EC00105DD7 /* MHFileManager.swift in Sources */,
 				39C609421EC4B1D800105DD7 /* String+Subscripts.swift in Sources */,

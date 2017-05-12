@@ -13,6 +13,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     enum Status: String {
         case Entrance = "Please select the folder to follow"
         case Exit = "Thanks, you will be notified about any changes in this folder. You can close the application"
+        case ActionWithFolder = "In observed folder happened Action"
     }
     
     var dataSource:[String] = []
@@ -23,7 +24,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.title = "Available folders"
         dataSource = MHFileManager.shared.getFilesInDocumentsFolder()
         showInformationMessage(withMessage: Status.Entrance)
-        print(dataSource)
+        registerForNotifications()
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.receivedNotificationAboutChanges), name: folderChangedNotification, object: nil)
     }
     
     // MARK:- UITableViewCell Delegate
@@ -49,22 +51,81 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         showInformationMessage(withMessage: Status.Exit)
+        
+        BackgroundManager.shared.folderToMonitor = MHFileManager.shared.directoryNames[indexPath.row]
+        BackgroundManager.shared.addFolderToMonitoring()
+        
         print(indexPath.row)
     }
     
     func showInformationMessage(withMessage current: Status) {
         
-        let message = current.rawValue
-        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
-        let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) {
-            (result : UIAlertAction) -> Void in
-            print("OK")
+        var message = ""
+        switch current {
+        case .Entrance, .Exit:
+            message = current.rawValue
+        case .ActionWithFolder:
+            message = current.rawValue
         }
-        
-        alertController.addAction(okAction)
-        self.present(alertController, animated: true, completion: nil)
-    }
+        DispatchQueue.main.async {
+            [weak self] in
+            let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) {
+                (result : UIAlertAction) -> Void in
+            }
+            
+            alertController.addAction(okAction)
+            self?.present(alertController, animated: true, completion: nil)
+        }
+}
    
+    func receivedNotificationAboutChanges() {
+        scheduleNotification()
+       
+    }
+    
+    func registerForNotifications() {
+        
+//        let enterInfo = UIMutableUserNotificationAction()
+//        enterInfo.identifier = "enter"
+//        enterInfo.title = "Enter your name"
+//        enterInfo.behavior = .textInput //this is the key to this example
+//        enterInfo.activationMode = .foreground
+        
+        let info = UIMutableUserNotificationAction()
+        info.identifier = "Info"
+        info.title = "Folder you observed - changed!"
+        
+        let category = UIMutableUserNotificationCategory()
+        category.identifier = "texted"
+        category.setActions([info], for: .default)
+        
+        let settings = UIUserNotificationSettings(
+            types: .alert, categories: [category])
+        
+        UIApplication.shared.registerUserNotificationSettings(settings)
+        
+    }
+
+    func scheduleNotification(){
+        
+        let n = UILocalNotification()
+        let c = Calendar.autoupdatingCurrent
+        var comp = c.dateComponents(in: c.timeZone, from: Date())
+        comp.second = comp.second!
+        let date = c.date(from: comp)
+        n.fireDate = date
+        
+        n.alertBody = "Folder you observed - changed!"
+        n.alertAction = "Enter"
+        n.category = "texted"
+        UIApplication.shared.scheduleLocalNotification(n)
+        
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: folderChangedNotification, object: nil)
+    }
 }
 
 

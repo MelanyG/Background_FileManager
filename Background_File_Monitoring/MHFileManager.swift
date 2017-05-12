@@ -8,11 +8,11 @@
 
 import Foundation
 
-var directoryNames: [URL] = []
-var stringDirectoryNames = [String]()
-let manager = FileManager.default
-
 class MHFileManager {
+    
+    var directoryNames: [URL] = []
+    var stringDirectoryNames = [String]()
+    let manager = FileManager.default
     
     static let shared: MHFileManager = {
         let instance = MHFileManager ()
@@ -23,10 +23,6 @@ class MHFileManager {
         let documentsUrl =  manager.urls(for: .documentDirectory, in: .userDomainMask).first!
         directoryNames.append(documentsUrl)
         do {
-
-            let directoryContents = try manager.contentsOfDirectory(at: documentsUrl, includingPropertiesForKeys: nil, options: [])
-            //        splitFilesInFolder(array: directoryContents)
-            //        checkForDirectories(inPath: documentsUrl, withAlreadyExisted: directoryContents)
             
             let resourceKeys : [URLResourceKey] = [.isDirectoryKey]
             
@@ -41,18 +37,12 @@ class MHFileManager {
                 let resourceValues = try fileURL.resourceValues(forKeys: Set(resourceKeys))
                 if resourceValues.isDirectory! {
                     directoryNames.append(fileURL)
-                    //                let directoryContents = try manager.contentsOfDirectory(at: fileURL, includingPropertiesForKeys: nil, options: [])
-                    //                if directoryNames.contains(fileURL.lastPathComponent) {
-                    //                    splitFilesInFolder(array: directoryContents, specialFolder: true)
-                    //                } else {
-                    //                    splitFilesInFolder(array: directoryContents)
-                    //                }
+
                 }
-                print(fileURL.path, resourceValues.creationDate, resourceValues.isDirectory)
-                print("***-----------***--------***")
+
             }
             return getNamesForFolders(fromArray: directoryNames)
-            //        onCompletion(DataSource.shared.allFiles, DataSource.shared.allSavedFiles)
+
         } catch {
             print(error)
             return []
@@ -66,7 +56,7 @@ class MHFileManager {
         if urlNew.containsWhitespace {
             urlNew = urlNew.replacingOccurrences(of: " ", with: "_")
         }
-//        let url = NSURL(string: urlNew)?.deletingPathExtension?.lastPathComponent
+
             guard let url = NSURL(string: urlNew)?.deletingPathExtension?.lastPathComponent else { continue }
             newArray.append(url)
         

@@ -25,8 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        registerForNotifications()
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -41,6 +40,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-
+    func registerForNotifications() {
+        
+        //        let enterInfo = UIMutableUserNotificationAction()
+        //        enterInfo.identifier = "enter"
+        //        enterInfo.title = "Enter your name"
+        //        enterInfo.behavior = .textInput //this is the key to this example
+        //        enterInfo.activationMode = .foreground
+        
+        let info = UIMutableUserNotificationAction()
+        info.identifier = "Info"
+        info.title = "Folder you observed - changed!"
+        
+        let category = UIMutableUserNotificationCategory()
+        category.identifier = "texted"
+        category.setActions([info], for: .default)
+        
+        let settings = UIUserNotificationSettings(
+            types: .alert, categories: [category])
+        
+        UIApplication.shared.registerUserNotificationSettings(settings)
+        
+    }
 }
 
