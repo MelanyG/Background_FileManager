@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -25,7 +26,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         dataSource = MHFileManager.shared.getFilesInDocumentsFolder()
         showInformationMessage(withMessage: Status.Entrance)
         registerForNotifications()
-        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.receivedNotificationAboutChanges), name: folderChangedNotification, object: nil)
+        
     }
     
     // MARK:- UITableViewCell Delegate
@@ -54,7 +55,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         BackgroundManager.shared.folderToMonitor = MHFileManager.shared.directoryNames[indexPath.row]
         BackgroundManager.shared.addFolderToMonitoring()
-        
+        BackgroundManager.shared.delegate = self
         print(indexPath.row)
     }
     
@@ -77,57 +78,62 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             alertController.addAction(okAction)
             self?.present(alertController, animated: true, completion: nil)
         }
+    }
+  
+    
+    deinit {
+         BackgroundManager.shared.delegate = nil
+    }
+    
 }
-   
-    func receivedNotificationAboutChanges() {
+
+extension ViewController: BackGroundDelegate {
+    func didChangeHappend() {
         scheduleNotification()
-       
+    }
+}
+
+extension ViewController: UNUserNotificationCenterDelegate {
+    
+    // MARK:- Notifications Actions
+    
+    func scheduleNotification() {
+        
+        let notif = UNMutableNotificationContent()
+        notif.title = "I am a Reminder"
+        notif.body = "Folder you observed - changed!"
+        notif.sound = UNNotificationSound.default()
+        notif.categoryIdentifier = "texted"
+        
+        let request = UNNotificationRequest(identifier: "texted", content: notif, trigger: nil)
+        
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: {
+            error in
+            if error != nil {
+                print(error?.localizedDescription ?? "some error")
+                // completion(Success: false)
+            } else {
+                print("success")
+                //completion(Sucess: true)
+            }
+        })
+        
     }
     
     func registerForNotifications() {
         
-//        let enterInfo = UIMutableUserNotificationAction()
-//        enterInfo.identifier = "enter"
-//        enterInfo.title = "Enter your name"
-//        enterInfo.behavior = .textInput //this is the key to this example
-//        enterInfo.activationMode = .foreground
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
+            // Enable or disable features based on authorization
+        }
+        let info = UNNotificationAction(identifier: "Info", title: "Folder you observed - changed!", options: [])
         
-        let info = UIMutableUserNotificationAction()
-        info.identifier = "Info"
-        info.title = "Folder you observed - changed!"
+        let category = UNNotificationCategory(identifier: "texted", actions: [info], intentIdentifiers: [], options: [.customDismissAction])
         
-        let category = UIMutableUserNotificationCategory()
-        category.identifier = "texted"
-        category.setActions([info], for: .default)
-        
-        let settings = UIUserNotificationSettings(
-            types: .alert, categories: [category])
-        
-        UIApplication.shared.registerUserNotificationSettings(settings)
-        
-    }
-
-    func scheduleNotification(){
-        
-        let n = UILocalNotification()
-        let c = Calendar.autoupdatingCurrent
-        var comp = c.dateComponents(in: c.timeZone, from: Date())
-        comp.second = comp.second!
-        let date = c.date(from: comp)
-        n.fireDate = date
-        
-        n.alertBody = "Folder you observed - changed!"
-        n.alertAction = "Enter"
-        n.category = "texted"
-        UIApplication.shared.scheduleLocalNotification(n)
-        
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self, name: folderChangedNotification, object: nil)
+        UNUserNotificationCenter.current().setNotificationCategories([category])
+        UNUserNotificationCenter.current().delegate = self
     }
 }
-
 
 class FileCell: UITableViewCell {
     

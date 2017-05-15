@@ -8,13 +8,14 @@
 
 import Foundation
 
-
-let folderChangedNotification = Notification.Name("FolderChangedNotification")
-
+protocol BackGroundDelegate {
+    func didChangeHappend()
+}
 
 class BackgroundManager {
     
     var folderToMonitor: URL!
+    var delegate:BackGroundDelegate?
     
     static let shared: BackgroundManager = {
         let instance = BackgroundManager ()
@@ -26,8 +27,7 @@ class BackgroundManager {
     var fileDescriptor: Int32!
     
     func addFolderToMonitoring() {
-
-        
+       
         fileDescriptor = open(folderToMonitor.path, O_CREAT, 0o644)
         
         _dispatchQueue = DispatchQueue(label: "Monitor")
@@ -36,8 +36,15 @@ class BackgroundManager {
         
         _source.setEventHandler {
             [weak self] in
-            NotificationCenter.default.post(name: folderChangedNotification, object: nil)
-            print(self?._source.mask)
+            if self?.delegate != nil {
+                self?.delegate?.didChangeHappend()
+            }
+        }
+        _source.setCancelHandler { 
+            [weak self] in
+            self?.delegate = nil
+            guard let desc = self?.fileDescriptor else { return }
+            close(desc)
         }
         _source.resume()
     }

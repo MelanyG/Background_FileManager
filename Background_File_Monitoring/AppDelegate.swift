@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,6 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
+
         // Override point for customization after application launch.
         return true
     }
@@ -25,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        registerForNotifications()
+//        registerForNotifications()
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -40,27 +43,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-    func registerForNotifications() {
-        
-        //        let enterInfo = UIMutableUserNotificationAction()
-        //        enterInfo.identifier = "enter"
-        //        enterInfo.title = "Enter your name"
-        //        enterInfo.behavior = .textInput //this is the key to this example
-        //        enterInfo.activationMode = .foreground
-        
-        let info = UIMutableUserNotificationAction()
-        info.identifier = "Info"
-        info.title = "Folder you observed - changed!"
-        
-        let category = UIMutableUserNotificationCategory()
-        category.identifier = "texted"
-        category.setActions([info], for: .default)
-        
-        let settings = UIUserNotificationSettings(
-            types: .alert, categories: [category])
-        
-        UIApplication.shared.registerUserNotificationSettings(settings)
-        
-    }
+
 }
 
